@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:multi-authenticator="http://www.mulesoft.org/schema/mule/multi-authenticator" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/multi-authenticator http://www.mulesoft.org/schema/mule/multi-authenticator/current/mule-multi-authenticator.xsd">
+    <flow name="test-basic-http-SHA256-right-credentials-flow" doc:id="5ab37a48-7ce3-4fbe-980e-ded446266a78" >
+        <multi-authenticator:do-http-basic-authentication HashAlgorithm="SHA256" doc:name="Do http basic authentication" doc:id="15873118-b649-43bc-ad14-b52ec58442e9" AuthenticationHeader="Basic YW5keTp0ZXN0">
+            <multi-authenticator:access-lists >
+                <multi-authenticator:access-list key="andy" value="9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08" />
+            </multi-authenticator:access-lists>
+        </multi-authenticator:do-http-basic-authentication>
+        <set-payload value="Authentication success using right credentials with SHA256" doc:name="Set Payload" doc:id="6d4b4746-da04-4f34-a826-b120079160eb" />
+    </flow>
+    <flow name="test-basic-http-SHA256-wrong-user-flow" doc:id="ed6899d7-2ac9-4406-b985-8ad452b411c9" >
+        <multi-authenticator:do-http-basic-authentication doc:name="Do http basic authentication" doc:id="bbee33bf-109c-4521-862b-bb8a3754b77d" HashAlgorithm="SHA256" AuthenticationHeader="Basic YW5keTp0ZXN0">
+            <multi-authenticator:access-lists >
+                <multi-authenticator:access-list key="andyy" value="9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08" />
+            </multi-authenticator:access-lists>
+        </multi-authenticator:do-http-basic-authentication>
+        <error-handler>
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="b9ee4a51-4325-4009-8a88-20d5cabcd282" type="MULTI-AUTHENTICATOR:BAD_CREDENTIALS">
+                <set-payload value="Authentication failed using wrong user with SHA256" doc:name="Set Payload" doc:id="cfa8f965-479e-4c31-8037-fe20f05aeead" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+    <flow name="test-basic-http-SHA512-right-credentials-flow" doc:id="3723ce40-c5b5-42f8-a365-b3215b446aeb" >
+        <multi-authenticator:do-http-basic-authentication doc:name="Do http basic authentication" doc:id="642da9c1-22f3-4824-80e6-52664e68a865" AuthenticationHeader="Basic YW5keTp0ZXN0" HashAlgorithm="SHA512">
+            <multi-authenticator:access-lists >
+                <multi-authenticator:access-list key="andy" value="ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff" />
+            </multi-authenticator:access-lists>
+        </multi-authenticator:do-http-basic-authentication>
+        <set-payload value="Authentication success using right credentials with SHA512" doc:name="Set Payload" doc:id="a47dfc08-a2a7-4441-9e52-4adcf1d204c5" />
+    </flow>
+    <flow name="test-basic-http-SHA512-wrong-user-flow" doc:id="9b26dffc-0e13-499b-87d3-d18bbd63b681" >
+        <multi-authenticator:do-http-basic-authentication doc:name="Do http basic authentication" doc:id="928fa68d-b907-445c-b826-7481eb27755e" AuthenticationHeader="Basic YW5keTp0ZXN0" HashAlgorithm="SHA512">
+            <multi-authenticator:access-lists >
+                <multi-authenticator:access-list key="andyy" value="ee26b0dd4af7e749aa1a8ee3c10ae9923f618980772e473f8819a5d4940e0db27ac185f8a0e1d5f84f88bc887fd67b143732c304cc5fa9ad8e6f57f50028a8ff"/>
+            </multi-authenticator:access-lists>
+        </multi-authenticator:do-http-basic-authentication>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="22479739-a3c4-4ac6-9522-8d3a2da63278" type="MULTI-AUTHENTICATOR:BAD_CREDENTIALS">
+                <set-payload value="Authentication failed using wrong user with SHA512" doc:name="Set Payload" doc:id="a3fc1f45-6a39-4e4a-a113-12b466dc66b1" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+    <flow name="test-basic-http-SHA256-right-credentials-external-map-flow" doc:id="adbf61fc-7100-427c-8fe3-6e9a2bb7c8ca" >
+        <set-payload value='#[%dw 2.0
+output application/java
+---
+{
+	andy: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+}]' doc:name="Set Payload" doc:id="a3655bc0-e6f5-4a01-9719-66d9a4eddb75" />
+        <multi-authenticator:do-http-basic-authentication doc:name="Do http basic authentication" doc:id="9119b6e0-e29d-4b46-b5d8-56a007667fa9" HashAlgorithm="SHA256" AccessList="#[payload]" AuthenticationHeader="Basic YW5keTp0ZXN0"/>
+        <set-payload value="Authentication success using right credentials with SHA256 and external map" doc:name="Set Payload" doc:id="a221c1ae-eab0-40df-986f-2e3d972cfee4" />
+    </flow>
+    <flow name="test-basic-http-SHA256-wrong-password-flow" doc:id="1510ed30-f244-438b-8d8c-805befd0f1de" >
+        <multi-authenticator:do-http-basic-authentication HashAlgorithm="SHA256" doc:name="Do http basic authentication" doc:id="45c602bc-a080-42d2-a22b-b51390623ec0" AuthenticationHeader="Basic YW5kcmVzOnRlc3QyMg==">
+            <multi-authenticator:access-lists >
+                <multi-authenticator:access-list key="andres" value="7d6fd7774f0d87624da6dcf16d0d3d104c3191e771fbe2f39c86aed4b2bf1a0f" />
+            </multi-authenticator:access-lists>
+        </multi-authenticator:do-http-basic-authentication>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="a24d0a89-9b65-4678-b495-4dd69463d809" type="MULTI-AUTHENTICATOR:BAD_CREDENTIALS">
+                <set-payload value="Authentication failed using wrong password with SHA256" doc:name="Set Payload" doc:id="bebc42ba-c51b-480c-8de1-4f26ba39b906" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+    <flow name="test-basic-http-SHA512-wrong-password-flow" doc:id="9655d94e-b707-466c-8362-c43615f934ba" >
+        <multi-authenticator:do-http-basic-authentication HashAlgorithm="SHA512" doc:name="Do http basic authentication" doc:id="4e7b2147-2576-47a2-a9f4-1a6f0dfdeb85" AuthenticationHeader="Basic YW5kcmVzOnRlc3Qy" >
+            <multi-authenticator:access-lists >
+                <multi-authenticator:access-list key="andres" value="a17cadcdf990000cd71a06fd2289f7de5149069c7d5c721ed5870c92cb317584db9c233778dc63428a3f8c654be1125adbbfe13402915ef127382144a0f02b1a" />
+            </multi-authenticator:access-lists>
+        </multi-authenticator:do-http-basic-authentication>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="e95e6343-5838-49a7-99bf-40e7f26f9a70" type="MULTI-AUTHENTICATOR:BAD_CREDENTIALS" >
+                <set-payload value="Authentication failed using wrong password with SHA512" doc:name="Set Payload" doc:id="e81e5c90-0e3a-44e1-a37f-12017897d5ff" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+    <flow name="test-basic-http-wrong-auth-type-flow" doc:id="fde88168-5d34-494d-8dfe-d7f0f25ed22d" >
+        <multi-authenticator:do-http-basic-authentication HashAlgorithm="SHA512" doc:name="Do http basic authentication" doc:id="57d6ddfe-3391-4e40-b1f4-55c825d8a7da" AuthenticationHeader="AWS4-HMAC-SHA256 Credential=hgfh/20200622/fgh/hfg/aws4_request, SignedHeaders=content-type;host;x-amz-date, Signature=9c20fd3ae53e857ac17b023d4f1467f1af52183409847f0a1e6d76a48fcaf5a2" >
+            <multi-authenticator:access-lists >
+                <multi-authenticator:access-list key="andres" value="a17cadcdf990000cd71a06fd2289f7de5149069c7d5c721ed5870c92cb317584db9c233778dc63428a3f8c654be1125adbbfe13402915ef127382144a0f02b1a" />
+            </multi-authenticator:access-lists>
+        </multi-authenticator:do-http-basic-authentication>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="67c0b550-7285-4897-ba22-3c065dc46991" type="MULTI-AUTHENTICATOR:INVALID_HTTP_AUTH_TYPE" >
+                <set-payload value="Authentication failed using wrong authentication type" doc:name="Set Payload" doc:id="709ff01d-d108-4254-8930-73916b127ca9" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+    <flow name="test-basic-http-wrong-base64-encode-flow" doc:id="c60c6b24-667b-4487-b788-97de19c1a835" >
+        <multi-authenticator:do-http-basic-authentication HashAlgorithm="SHA512" doc:name="Do http basic authentication" doc:id="01e3f45b-ccac-455e-afe5-646b79bef5f9" AuthenticationHeader="Basic YW5kcmVz&amp;nRlc3Qy" >
+            <multi-authenticator:access-lists >
+                <multi-authenticator:access-list key="andres" value="a17cadcdf990000cd71a06fd2289f7de5149069c7d5c721ed5870c92cb317584db9c233778dc63428a3f8c654be1125adbbfe13402915ef127382144a0f02b1a" />
+            </multi-authenticator:access-lists>
+        </multi-authenticator:do-http-basic-authentication>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4792360b-b92a-400e-b12a-37732b6cad88" type="MULTI-AUTHENTICATOR:BAD_BASE64_ENCODE" >
+                <set-payload value="Authentication failed using bad Base64 encoding" doc:name="Set Payload" doc:id="9c4f569b-5407-4455-8b0d-4ba702d72317" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+    <flow name="test-basic-http-null-auth-header-flow" doc:id="998443af-82de-46e1-a88a-92990ae7a6bc" >
+        <multi-authenticator:do-http-basic-authentication HashAlgorithm="SHA256" doc:name="Do http basic authentication" doc:id="291bb6c1-5d29-42d5-aff0-415c97745de2">
+            <multi-authenticator:access-lists >
+                <multi-authenticator:access-list key="andy" value="9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08" />
+            </multi-authenticator:access-lists>
+        </multi-authenticator:do-http-basic-authentication>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="6889f27e-5d72-4e2c-a0c0-b753755f38d2" type="MULTI-AUTHENTICATOR:MISSING_AUTH_HEADER">
+                <set-payload value="Authentication failed using null auth header" doc:name="Set Payload" doc:id="c3e7920f-34d9-42f0-a5d6-67214ca04221" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+    <flow name="test-api-key-SHA1-right-credentials-flow" doc:id="19fe84e4-9382-40d6-b848-cb346a1a4220" >
+        <multi-authenticator:do-api-key-authentication doc:name="Do api key authentication" doc:id="4b62cf75-5a08-4ed9-aaf0-aa2f372d16d3" AuthenticationHeader="cc49d88a-bf94-4062-a525-26acae1299bc" HashAlgorithm="SHA1">
+            <multi-authenticator:keys >
+                <multi-authenticator:key value="9dd0e18fbb495337dc2f96fe805d215077cc652c" />
+            </multi-authenticator:keys>
+        </multi-authenticator:do-api-key-authentication>
+        <set-payload value="API Key Authentication success using right credentials with SHA1" doc:name="Set Payload" doc:id="694d11f0-2c86-4a0f-a0e2-84129e006023" />
+    </flow>
+    <flow name="test-api-key-SHA1-wrong-credentials-flow" doc:id="3a901888-0645-431f-9e1e-641e685854e7" >
+        <multi-authenticator:do-api-key-authentication HashAlgorithm="SHA1" doc:name="Do api key authentication" doc:id="449d8aaa-7076-4b3b-a5c5-0ee15fea58dd" AuthenticationHeader="cc49d88a-bf94-4062-a525-26adae1299bc" >
+            <multi-authenticator:keys >
+                <multi-authenticator:key value="9dd0e18fbb495337dc2f96fe805d215077cc652c" />
+            </multi-authenticator:keys>
+        </multi-authenticator:do-api-key-authentication>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="eb6aefb1-8897-4f2e-89e5-47eac7125e90" type="MULTI-AUTHENTICATOR:BAD_CREDENTIALS">
+                <set-payload value="API Key Authentication failed using wrong API Key with SHA1" doc:name="Set Payload" doc:id="a908bb49-4628-4662-9558-4a6a526a7358" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+    <flow name="test-api-key-SHA1-right-credentials-external-list-flow" doc:id="88932822-327d-44e1-82fb-2b02928fa51c" >
+        <set-payload value='#[%dw 2.0
+output application/java
+---
+[
+	"9dcc14b4b6c423b485ccdfcb9c8ed68842f035a4",
+	"4b1c27cc5c3e18e39ccb4910fdee461640d83d3c"
+]]' doc:name="Set Payload" doc:id="baf2cc6d-e039-469f-b693-fe85729d73d8" />
+        <multi-authenticator:do-api-key-authentication HashAlgorithm="SHA1" doc:name="Do api key authentication" doc:id="317130ec-a2b1-4f7c-9dcb-364646323058" AuthenticationHeader="2c4add26-ddb4-4675-a576-20755e53d451" Keys="#[payload]"/>
+        <set-payload value="API Key Authentication success using right credentials with SHA1 and external list" doc:name="Set Payload" doc:id="9f1b45de-3c5e-43e9-bafb-46f42de9275d" />
+    </flow>
+    <flow name="test-generate-jwt-SHA512-flow" doc:id="e54dd84f-94d0-4e77-b1bd-09555ab1e105" >
+        <multi-authenticator:generate-json-web-token TokenTtlInMs="#[999999999999]" doc:name="Generate json web token" doc:id="7f15bf07-e301-4994-966c-53c9f0f9b718" Secret="OMr&lt;+&gt;Tq6CUt'IW&gt;p&gt;QjC-JBnD[I9=0r;FP[6(4oQKi,SSN=-iAyaN)';&lt;Knc,9" SignatureAlgorithm="HS256">
+            <multi-authenticator:token-claims >
+                <multi-authenticator:token-claim key="payloadKey" value="Payload Value" />
+            </multi-authenticator:token-claims>
+        </multi-authenticator:generate-json-web-token>
+    </flow>
+    <flow name="test-verify-jwt-SHA256-right-secret-flow" doc:id="a1be51b7-3f40-4a34-98da-349f2d3c508e" >
+        <multi-authenticator:generate-json-web-token TokenTtlInMs="#[99999]" doc:name="Generate json web token" doc:id="bf8fd32a-a256-4280-ba6c-fc8bcd52bd15" Secret="OMr&lt;+&gt;Tq6CUt'IW&gt;p&gt;QjC-JBnD[I9=0r;FP[6(4oQKi,SSN=-iAyaN)';&lt;Knc,9" SignatureAlgorithm="HS256">
+            <multi-authenticator:token-claims >
+                <multi-authenticator:token-claim key="message" value="JWT generation success using SHA256 and right secret" />
+            </multi-authenticator:token-claims>
+        </multi-authenticator:generate-json-web-token>
+        <multi-authenticator:verify-json-web-token doc:name="Verify json web token" doc:id="40692e4b-7880-42ec-8390-9f3cadcbd68f" Secret="OMr&lt;+&gt;Tq6CUt'IW&gt;p&gt;QjC-JBnD[I9=0r;FP[6(4oQKi,SSN=-iAyaN)';&lt;Knc,9" JsonWebToken="#[payload]"/>
+    </flow>
+    <flow name="test-verify-jwt-SHA256-expired-token-flow" doc:id="1a292dda-adca-4aad-93f2-e7c131ea98a3" >
+        <multi-authenticator:generate-json-web-token TokenTtlInMs="#[0]" doc:name="Generate json web token" doc:id="30f15f15-9032-414d-a06a-925580d62f05" SignatureAlgorithm="HS256" Secret="OMr&lt;+&gt;Tq6CUt'IW&gt;p&gt;QjC-JBnD[I9=0r;FP[6(4oQKi,SSN=-iAyaN)';&lt;Knc,9">
+            <multi-authenticator:token-claims >
+            </multi-authenticator:token-claims>
+        </multi-authenticator:generate-json-web-token>
+        <multi-authenticator:verify-json-web-token doc:name="Verify json web token" doc:id="0e3fca5a-99e1-4c15-80bb-0337adef0bbc" Secret="OMr&lt;+&gt;Tq6CUt'IW&gt;p&gt;QjC-JBnD[I9=0r;FP[6(4oQKi,SSN=-iAyaN)';&lt;Knc,9" JsonWebToken="#[payload]"/>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2bbe1491-20a6-4e20-9979-4f68ac250a62" type="MULTI-AUTHENTICATOR:INVALID_TOKEN">
+                <set-payload value="Verify JWT failed using expired token with SHA256" doc:name="Set Payload" doc:id="fe18316a-261f-41ac-ae7b-e94ae5dd8cdd" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+    <flow name="test-verify-jwt-SHA512-invalid-secret-flow" doc:id="4f9a6341-61a8-4256-b470-bd1231d82867" >
+        <multi-authenticator:generate-json-web-token TokenTtlInMs="#[10000]" doc:name="Generate json web token" doc:id="662b9370-e777-4fb8-bc12-762ee92c5425" Secret="OMr&lt;+&gt;Tq6CUt'IW&gt;p&gt;QjC-JBnD[I9=0r;FP[6(4oQKi,SSN=-iAyaN)';&lt;Knc,9" SignatureAlgorithm="HS512">
+            <multi-authenticator:token-claims />
+        </multi-authenticator:generate-json-web-token>
+        <multi-authenticator:verify-json-web-token doc:name="Verify json web token" doc:id="afc3014f-8d02-4f32-bfe4-fe0232f5df6a" Secret="OMr&lt;+&gt;Tq6CUt'Iw&gt;p&gt;QjC-JBnD[I9=0r;FP[6(4oQKi,SSN=-iAyaN)';&lt;Knc,9" JsonWebToken="#[payload]"/>
+        <error-handler >
+            <on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9c38999e-b939-419b-af82-01f206ee18a9" type="MULTI-AUTHENTICATOR:INVALID_TOKEN">
+                <set-payload value="Verify JWT failed using invalid secret with SHA512" doc:name="Set Payload" doc:id="fbab19a9-b3ba-4c80-b794-64f0aaa7d21c" />
+            </on-error-continue>
+        </error-handler>
+    </flow>
+</mule>
